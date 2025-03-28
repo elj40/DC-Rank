@@ -34,7 +34,6 @@ class Main {
     {
         try{
 
-            System.out.println("Hello Worlds!");
             // Database where all the links and names are stored
             // Stored as [[link][name], [link2][name2]]
             
@@ -42,6 +41,8 @@ class Main {
             String pathname = "../Comic_List.txt";
             File file = new File(pathname); 
             Scanner scanner = new Scanner(file);
+
+            System.out.println("Reading database from:" + pathname);
 
             for (int i = 0; scanner.hasNextLine(); i++)
             {
@@ -54,11 +55,13 @@ class Main {
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
+
             RootHandler root = new RootHandler();
             root.responseData = dbToStringBuilder(database).toString();
             HttpContext context = server.createContext("/", root);
 
             server.start(); 
+            System.out.println("Serving at :" + server.getAddress());
 
         } catch (Exception e) { e.printStackTrace(); };
     }
