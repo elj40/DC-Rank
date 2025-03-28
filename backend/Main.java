@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.IOException;
 
+import java.util.Random;
+
 class RootHandler implements HttpHandler {
     String responseData;
 
@@ -25,10 +27,29 @@ class RootHandler implements HttpHandler {
     }
 }
 
-class Main {
+class RandomDataFetchHandler implements HttpHandler
+{
+    String[][] database;
+    public void handle(HttpExchange exchange)
+    {
+        Random random = new Random();
+        int index = random.nextInt(Main.DB_SIZE);
 
+        try {
+
+        String randomLine = Main.dbLineToStringBuilder(database, index).toString();
+        exchange.sendResponseHeaders(200, 0);
+        OutputStream responseStream = exchange.getResponseBody();
+        responseStream.write(randomLine.getBytes());
+        responseStream.close();
+        
+        } catch (IOException e) { e.printStackTrace(); }
+    };
+}
+class Main {
     static int LINK_INDEX = 0;
     static int NAME_INDEX = 1;
+    static int DB_SIZE = 100;
 
     public static void main(String[] args)
     {
@@ -37,7 +58,7 @@ class Main {
             // Database where all the links and names are stored
             // Stored as [[link][name], [link2][name2]]
             
-            String[][] database = new String[100][2];
+            String[][] database = new String[DB_SIZE][2];
             String pathname = "../Comic_List.txt";
             File file = new File(pathname); 
             Scanner scanner = new Scanner(file);
@@ -51,14 +72,18 @@ class Main {
                 database[index][dataType] = scanner.nextLine();
             }
 
-            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8081);
+            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
 
-            RootHandler root = new RootHandler();
-            root.responseData = dbToStringBuilder(database).toString();
-            HttpContext context = server.createContext("/", root);
+            RootHandler rootHandler = new RootHandler();
+            HttpContext rootContext = server.createContext("/", rootHandler);
+            rootHandler.responseData = dbToStringBuilder(database).toString();
+
+            RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler();
+            HttpContext rdfContext = server.createContext("/random", rdfHandler);
+            rdfHandler.database = database;
 
             server.start(); 
             System.out.println("Serving at :" + server.getAddress());
@@ -76,6 +101,16 @@ class Main {
             sb.append(record[LINK_INDEX]);
             sb.append("\n");
         }
+        return sb;
+    };
+
+    static StringBuilder dbLineToStringBuilder(String[][] database, int index)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(database[index][NAME_INDEX]);
+        sb.append(": ");
+        sb.append(database[index][LINK_INDEX]);
+        sb.append("\n");
         return sb;
     };
 }
