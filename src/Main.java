@@ -10,14 +10,15 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 class RootHandler implements HttpHandler {
+    String responseData;
+
     public void handle(HttpExchange exchange)
     {
-        System.out.println(exchange.getRequestBody());
         try {
+
         exchange.sendResponseHeaders(200, 0);
-        String response = "Your mom";
         OutputStream responseStream = exchange.getResponseBody();
-        responseStream.write(response.getBytes());
+        responseStream.write(responseData.getBytes());
         responseStream.close();
         
         } catch (IOException e) { e.printStackTrace(); }
@@ -25,6 +26,10 @@ class RootHandler implements HttpHandler {
 }
 
 class Main {
+
+    static int LINK_INDEX = 0;
+    static int NAME_INDEX = 1;
+
     public static void main(String[] args)
     {
         try{
@@ -35,7 +40,8 @@ class Main {
             
             String[][] database = new String[100][2];
             String pathname = "../Comic_List.txt";
-            File file = new File(pathname); Scanner scanner = new Scanner(file);
+            File file = new File(pathname); 
+            Scanner scanner = new Scanner(file);
 
             for (int i = 0; scanner.hasNextLine(); i++)
             {
@@ -47,10 +53,26 @@ class Main {
             InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8081);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
-            HttpContext context = server.createContext("/", new RootHandler());
+
+            RootHandler root = new RootHandler();
+            root.responseData = dbToStringBuilder(database).toString();
+            HttpContext context = server.createContext("/", root);
 
             server.start(); 
 
         } catch (Exception e) { e.printStackTrace(); };
     }
+
+    static StringBuilder dbToStringBuilder(String[][] database)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (String[] record : database)
+        {
+            sb.append(record[NAME_INDEX]);
+            sb.append(": ");
+            sb.append(record[LINK_INDEX]);
+            sb.append("\n");
+        }
+        return sb;
+    };
 }
