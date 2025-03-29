@@ -10,11 +10,13 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.lang.Exception;
 import java.io.OutputStream;
 
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.Map;
 
 class GenericHandler implements HttpHandler {
     byte[] responseBytes;
@@ -66,6 +68,7 @@ class StaticFileHandler implements HttpHandler
 class ScoresheetHandler implements HttpHandler
 {
     HashMap<String, Integer> scoresheet;
+    static int c = 0;
     ScoresheetHandler(HashMap<String, Integer> ss)
     {
         scoresheet = ss;
@@ -77,15 +80,18 @@ class ScoresheetHandler implements HttpHandler
 
         InputStream requestBodyStream = exchange.getRequestBody();
         String requestBody = new String(requestBodyStream.readAllBytes());
-        System.out.println(requestBody);
-        scoresheet.put(requestBody, scoresheet.get(requestBody) + 1);
-        System.out.println(requestBody + ": " + scoresheet.get(requestBody));
+
+        int newScore = 1;
+        if (scoresheet.containsKey(requestBody)) newScore = scoresheet.get(requestBody)+1;
+        scoresheet.put(requestBody, newScore);
+
+        System.out.println(requestBody + ": " + newScore);
 
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.close();
-        
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); }  
+        catch (Exception e) { e.printStackTrace(); } 
     }
 }
     
@@ -101,6 +107,10 @@ class RandomDataFetchHandler implements HttpHandler
         Random random = new Random();
         int index = random.nextInt(Main.DB_SIZE);
 
+        System.out.println("Printing scoresheet...");
+        for (Map.Entry<String, Integer> entry : Main.scoresheet.entrySet()) {
+            System.out.println("alskjdfha " +  entry.getKey() + ": " + entry.getValue());
+        }
         try {
 
         String randomLine = Main.dbLineToStringBuilder(database, index).toString();
@@ -120,6 +130,8 @@ class Main {
     static String INDEX_HTML_PATH = "../frontend/index.html";
     static String COMIC_LIST_PATH = "../Comic_List.txt";
 
+    static HashMap<String, Integer> scoresheet;
+
     public static void main(String[] args)
     {
         try{
@@ -127,7 +139,7 @@ class Main {
             // Database where all the links and names are stored
             // Stored as [[link][name], [link2][name2]]
             String[][] database = new String[DB_SIZE][2];
-            HashMap<String, Integer> scoresheet = new HashMap<String, Integer>();
+            scoresheet = new HashMap<String, Integer>();
 
             File file = new File(COMIC_LIST_PATH); 
             Scanner scanner = new Scanner(file);
