@@ -28,5 +28,5 @@ function showImage(characterName, imageLink) {
     }
 
     container.innerHTML = "";
-    container.appendChild(img);
+    container.appendChild(img); 
 }
