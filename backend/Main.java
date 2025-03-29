@@ -72,16 +72,18 @@ class ScoresheetHandler implements HttpHandler
     }
     public void handle(HttpExchange exchange)
     {
+        //System.out.println("Updating scoresheet");
         try {
 
         InputStream requestBodyStream = exchange.getRequestBody();
         String requestBody = new String(requestBodyStream.readAllBytes());
         System.out.println(requestBody);
+        scoresheet.put(requestBody, scoresheet.get(requestBody) + 1);
+        System.out.println(requestBody + ": " + scoresheet.get(requestBody));
 
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
-        //responseStream.write(randomLine.getBytes());
-        //responseStream.close();
+        responseStream.close();
         
         } catch (IOException e) { e.printStackTrace(); }
     }
