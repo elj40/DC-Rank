@@ -1,4 +1,12 @@
 console.log("Hello World");
+document.onkeyup = function(eventKeyPress) {
+    if (eventKeyPress.key === "ArrowLeft") {
+        contender1Click();
+    }
+    if (eventKeyPress.key === "ArrowRight") {
+        contender2Click();
+    }
+}
 
 let pg = document.getElementById("pg");
 pg.innerText = "I do care";
