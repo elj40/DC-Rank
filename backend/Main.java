@@ -83,6 +83,8 @@ class Main {
     static int NAME_INDEX = 1;
     static int DB_SIZE = 100;
 
+    static String INDEX_HTML_PATH = "../frontend/index.html";
+
     public static void main(String[] args)
     {
         try{
@@ -108,8 +110,8 @@ class Main {
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
-            String responseString = dbToStringBuilder(database).toString();
-            GenericHandler rootHandler = new GenericHandler(responseString.getBytes());
+            //String responseString = dbToStringBuilder(database).toString();
+            StaticFileHandler rootHandler = new StaticFileHandler(INDEX_HTML_PATH);
             server.createContext("/", rootHandler);
 
             RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler(database);
