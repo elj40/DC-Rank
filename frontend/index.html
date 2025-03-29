@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
             margin: 0;
@@ -9,6 +9,10 @@
             justify-content: space-between;
             align-items: center;
             height: 100vh;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: #000000;
+            
         }
 
         .image-container {
@@ -18,16 +22,18 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            font-size: 1.2rem;
+            
         }
 
         .character-name {
-            font-size: 24px;
+            font-size: 24rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 10vh;
         }
         .topBar-container {
             width: 100%;
-            height: 68px; 
+            height: 7.5vh; 
             background-color: #4CAF50; 
             display: flex;
             justify-content: center;
@@ -36,9 +42,10 @@
             top: 0;
             left: 0;
             z-index: 1000;
+            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a); 
         }
         .topBar-text {
-            font-size: 18px; 
+            font-size: 1.5rem; 
             color: white; 
             font-weight: bold;
         }
@@ -47,18 +54,24 @@
             top: 50%; /* Center vertically */
             left: 50%; /* Center horizontally */
             transform: translate(-50%, -50%); /* Adjust for exact centering */
-            font-size: 8vw; /* Font size based on viewport width */
+            font-size: 9rem; /* Font size based on viewport width */
             color: red; /* Red color */
             font-weight: bold; /* Bold text */
             font-family: Arial, sans-serif; /* Font family */
+            text-shadow: 
+            -3px -3px 0 #000,   /* Top-left black shadow */
+            3px -3px 0 #000,   /* Top-right black shadow */
+            -3px  3px 0 #000,   /* Bottom-left black shadow */
+            3px  3px 0 #000,   /* Bottom-right black shadow */
+             6px  6px 5px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
         }
         .Instructions {
             position: fixed;        /* Fixes it at a specific position */
-            bottom: 20px;           /* Places it 20px from the bottom of the screen */
+            bottom: 1vh;           /* Places it 20px from the bottom of the screen */
             left: 50%;              /* Centers it horizontally */
             transform: translateX(-50%);  /* Adjusts the horizontal position to truly center it */
             color: rgb(128, 128, 128);            /* Sets the text color to grey */
-            font-size: 14px;        /* Makes the font smaller */
+            font-size: 1rem;        /* Makes the font smaller */
             text-align: center;     /* Centers the text */
             font-family: Arial, sans-serif;  /* Optional: sets a default font */
         }
@@ -66,14 +79,167 @@
         img {
             max-width: 45vw;
             max-height: 80vh;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
         }
+        @media screen and (orientation: portrait) {
+            body {
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #000000;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+/* Stack images vertically */
+.image-container {
+    flex: none; /* Prevent stretching */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%; /* Full width */
+    margin: 10px 0; /* Space between images */
+}
+
+.character-name {
+    font-size: 1.5rem; /* Smaller font size for mobile */
+    font-weight: bold;
+    margin-bottom: 5vh;
+}
+
+/* Top bar with gradient */
+.topBar-container {
+    width: 100%;
+    height: 6vh; /* Slightly smaller for mobile */
+    background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.topBar-text {
+    font-size: 1.2rem; /* Slightly smaller */
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* VS Text: Adjust size dynamically */
+.VSText {
+    position: absolute;
+    top: 42%; /* Adjusted to fit between images */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12vw; /* Dynamic size */
+    color: red;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    text-shadow: 
+        -2px -2px 0 #000, 
+        2px -2px 0 #000, 
+        -2px 2px 0 #000, 
+        2px 2px 0 #000, 
+        4px 4px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Instructions */
+.Instructions {
+    position: fixed;
+    bottom: 2vh;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgb(100, 100, 100);
+    font-size: 0.9rem; /* Smaller for mobile */
+    text-align: center;
+}
+
+/* Ensure images are responsive */
+img {
+    max-width: 90vw; /* Scale images properly */
+    max-height: 40vh; /* Limit height */
+}
+
+/* Media Query: Apply when screen width is less than 768px (Mobile) */
+@media screen and (max-width: 768px) {
+    body {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        justify-content: flex-start;
+        height: 100vh; /* Ensure full viewport height */
+        margin: 0;
+    }
+
+    .VSText {
+        position: absolute; /* Position absolutely within the body */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust for exact centering */
+        font-size: 4rem; /* Adjust font size for smaller screens */
+        color: red; /* Color of the text */
+        font-weight: bold; /* Bold text */
+        text-shadow: 
+            -3px -3px 0 #000,   /* Top-left black shadow */
+            3px -3px 0 #000,    /* Top-right black shadow */
+            -3px  3px 0 #000,   /* Bottom-left black shadow */
+            3px  3px 0 #000,    /* Bottom-right black shadow */
+            6px  6px 5px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    }
+
+    .image-container {
+        margin-top: 5vh; /* Add space between the VS text and images */
+        display: flex;
+        flex-direction: column; /* Stack images vertically */
+        justify-content: center;
+        align-items: center;
+    }
+
+    .topBar-container {
+        height: 5.5vh; /* Adjust top bar height */
+    }
+
+    .topBar-text {
+        font-size: 1rem; /* Smaller text for the top bar */
+    }
+
+    .Instructions {
+        font-size: 0.8rem; /* Smaller instructions */
+        visibility: hidden;
+    }
+
+    img {
+        height: 35vh; /* Set image height */
+        max-width: 90%; /* Prevent images from being too wide */
+    }
+}
+
+
+
+
+        
+    }    
     </style>
     <script>
         const baseURL = "http://127.0.0.1:8080";
+        let seenCharacters = [];
 
         async function getRandomData() {
             let response = await fetch(baseURL + "/random");
             let data = await response.text();
+            fetch(baseURL + "/random", {
+                method: "POST",
+                body: seenCharacters
+            });
+
             return data;
         }
 
@@ -84,6 +250,9 @@
             while (char1 === char2) {  // Ensure they are not the same
                 char2 = await getRandomData();
             }
+            seenCharacters.push(char1);
+            seenCharacters.push(char2);
+            
 
             updateCharacter("contender1", "name1", char1);
             updateCharacter("contender2", "name2", char2);
@@ -107,6 +276,8 @@
             name2.textContent = "";
             let newCharacter = await getRandomData();
             updateCharacter("contender2", "name2", newCharacter);
+            seenCharacters.push(newCharacter);
+
 
             fetch(baseURL + "/scoresheet", {
                 method: "POST",
@@ -121,6 +292,7 @@
             name1.textContent = "";
             let newCharacter = await getRandomData();
             updateCharacter("contender1", "name1", newCharacter);
+            seenCharacters.push(newCharacter);
 
             fetch(baseURL + "/scoresheet", {
                 method: "POST",
@@ -146,7 +318,6 @@
             <div class="topBar-text">Welcome to DCMash</div>
         </div>
     </header>
-    <div class="VSText">VS</div>
     <div class="Instructions">
         Select whoever you think is hotter (or use arrow keys)
     </div>
@@ -155,6 +326,7 @@
         <p id="name1">Loading...</p>
         <img id="contender1" src=""  height="700">
     </div>
+    <div class="VSText">VS</div>
 
     <div class="image-container" onclick="contender2Click()">
         <p id="name2">Loading...</p>
