@@ -2,15 +2,23 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Random;
 import java.util.Scanner;
 
-class RootHandler implements HttpHandler {
-    String responseData;
+class GenericHandler implements HttpHandler {
+    byte[] responseBytes;
+
+    GenericHandler(byte[] _responseBytes)
+    {
+        responseBytes = _responseBytes;
+    }
 
     public void handle(HttpExchange exchange)
     {
@@ -18,16 +26,42 @@ class RootHandler implements HttpHandler {
 
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
-        responseStream.write(responseData.getBytes());
+        responseStream.write(responseBytes);
         responseStream.close();
         
         } catch (IOException e) { e.printStackTrace(); }
     }
 }
+class StaticFileHandler implements HttpHandler
+{
+    String filePath;
+    StaticFileHandler(String _filePath)
+    {
+        filePath = _filePath;
+    }
+    public void handle(HttpExchange exchange)
+    {
 
+        try {
+
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        byte[] fileBytes = fileInputStream.readAllBytes();
+
+        exchange.sendResponseHeaders(200, 0);
+        OutputStream responseStream = exchange.getResponseBody();
+        responseStream.write(fileBytes);
+        responseStream.close();
+        
+        } catch (IOException e) { e.printStackTrace(); }
+    };
+}
 class RandomDataFetchHandler implements HttpHandler
 {
     String[][] database;
+    RandomDataFetchHandler(String[][] db)
+    {
+        database = db;
+    }
     public void handle(HttpExchange exchange)
     {
         Random random = new Random();
@@ -74,14 +108,15 @@ class Main {
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
+            String responseString = dbToStringBuilder(database).toString();
+            GenericHandler rootHandler = new GenericHandler(responseString.getBytes());
+            server.createContext("/", rootHandler);
 
-            RootHandler rootHandler = new RootHandler();
-            HttpContext rootContext = server.createContext("/", rootHandler);
-            rootHandler.responseData = dbToStringBuilder(database).toString();
-
-            RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler();
+            RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler(database);
             HttpContext rdfContext = server.createContext("/random", rdfHandler);
-            rdfHandler.database = database;
+
+            StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
+            server.createContext("/index", indexHtml);
 
             server.start(); 
             System.out.println("Serving at :" + server.getAddress());
