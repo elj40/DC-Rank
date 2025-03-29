@@ -85,7 +85,7 @@
             let newCharacter = await getRandomData();
             updateCharacter("contender1", "name1", newCharacter);
 
-            fetch(baseURL + "/report", {
+            fetch(baseURL + "/scoresheet", {
                 method: "POST",
                 body: name2.textContent
             });
