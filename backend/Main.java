@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 class GenericHandler implements HttpHandler {
@@ -68,14 +69,12 @@ class StaticFileHandler implements HttpHandler
 class ScoresheetHandler implements HttpHandler
 {
     HashMap<String, Integer> scoresheet;
-    static int c = 0;
     ScoresheetHandler(HashMap<String, Integer> ss)
     {
         scoresheet = ss;
     }
     public void handle(HttpExchange exchange)
     {
-        //System.out.println("Updating scoresheet");
         try {
 
         InputStream requestBodyStream = exchange.getRequestBody();
@@ -85,7 +84,6 @@ class ScoresheetHandler implements HttpHandler
         if (scoresheet.containsKey(requestBody)) newScore = scoresheet.get(requestBody)+1;
         scoresheet.put(requestBody, newScore);
 
-        System.out.println(requestBody + ": " + newScore);
 
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
@@ -97,29 +95,25 @@ class ScoresheetHandler implements HttpHandler
     
 class RandomDataFetchHandler implements HttpHandler
 {
-    String[][] database;
-    RandomDataFetchHandler(String[][] db)
-    {
-        database = db;
-    }
     public void handle(HttpExchange exchange)
     {
         Random random = new Random();
         int index = random.nextInt(Main.DB_SIZE);
 
-        System.out.println("Printing scoresheet...");
-        for (Map.Entry<String, Integer> entry : Main.scoresheet.entrySet()) {
-            System.out.println("alskjdfha " +  entry.getKey() + ": " + entry.getValue());
-        }
         try {
 
-        String randomLine = Main.dbLineToStringBuilder(database, index).toString();
+        String randomLine = Main.dbNameToStringBuilder(Main.database, Main.databaseNames[index]).toString();
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.write(randomLine.getBytes());
         responseStream.close();
         
         } catch (IOException e) { e.printStackTrace(); }
+    };
+
+    int getUnseenRandomIndex(HashSet<String> seen)
+    {
+        return 0;
     };
 }
 class Main {
@@ -131,14 +125,18 @@ class Main {
     static String COMIC_LIST_PATH = "../Comic_List.txt";
 
     static HashMap<String, Integer> scoresheet;
+    static HashMap<String, String> database;
+    static String[] databaseNames;
 
     public static void main(String[] args)
     {
         try{
 
             // Database where all the links and names are stored
-            // Stored as [[link][name], [link2][name2]]
-            String[][] database = new String[DB_SIZE][2];
+            // key: name
+            // value: link
+            database = new HashMap<String, String>();
+            databaseNames = new String[100];
             scoresheet = new HashMap<String, Integer>();
 
             File file = new File(COMIC_LIST_PATH); 
@@ -146,12 +144,18 @@ class Main {
 
             System.out.println("Reading database from:" + COMIC_LIST_PATH);
 
-            for (int i = 0; scanner.hasNextLine(); i++)
+            String name, link;
+            for (int i = 0; scanner.hasNextLine(); i += 1)
             {
-                int index = i/2;
-                int dataType = i % 2;
-                database[index][dataType] = scanner.nextLine();
+                link = scanner.nextLine();
+                assert(scanner.hasNextLine());
+                name = scanner.nextLine();
+
+                databaseNames[i] = name;
+                database.put(name, link);
             }
+
+
 
             //====================== Server stuff =================================
             InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
@@ -161,7 +165,7 @@ class Main {
             StaticFileHandler rootHandler = new StaticFileHandler(INDEX_HTML_PATH);
             server.createContext("/", rootHandler);
 
-            RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler(database);
+            RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler();
             HttpContext rdfContext = server.createContext("/random", rdfHandler);
 
             StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
@@ -189,12 +193,14 @@ class Main {
         return sb;
     };
 
-    static StringBuilder dbLineToStringBuilder(String[][] database, int index)
+    static StringBuilder dbNameToStringBuilder(HashMap<String, String> database, String name)
     {
+        System.out.println("dbNameToStringBuilder: " + name);
+        assert(database.containsKey(name) && name != null);
         StringBuilder sb = new StringBuilder();
-        sb.append(database[index][NAME_INDEX]);
+        sb.append(name);
         sb.append(": ");
-        sb.append(database[index][LINK_INDEX]);
+        sb.append(database.get(name));
         sb.append("\n");
         return sb;
     };
