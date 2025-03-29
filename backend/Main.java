@@ -1,16 +1,20 @@
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
+
 import java.util.Random;
 import java.util.Scanner;
+import java.util.HashMap;
 
 class GenericHandler implements HttpHandler {
     byte[] responseBytes;
@@ -47,7 +51,10 @@ class StaticFileHandler implements HttpHandler
         FileInputStream fileInputStream = new FileInputStream(filePath);
         byte[] fileBytes = fileInputStream.readAllBytes();
 
+        Headers responseHeaders = exchange.getResponseHeaders();
+        responseHeaders.set("Content-Type", "text/html; charset=utf-8");
         exchange.sendResponseHeaders(200, 0);
+
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.write(fileBytes);
         responseStream.close();
@@ -55,6 +62,31 @@ class StaticFileHandler implements HttpHandler
         } catch (IOException e) { e.printStackTrace(); }
     };
 }
+
+class ScoresheetHandler implements HttpHandler
+{
+    HashMap<String, Integer> scoresheet;
+    ScoresheetHandler(HashMap<String, Integer> ss)
+    {
+        scoresheet = ss;
+    }
+    public void handle(HttpExchange exchange)
+    {
+        try {
+
+        InputStream requestBodyStream = exchange.getRequestBody();
+        String requestBody = new String(requestBodyStream.readAllBytes());
+        System.out.println(requestBody);
+
+        exchange.sendResponseHeaders(200, 0);
+        OutputStream responseStream = exchange.getResponseBody();
+        //responseStream.write(randomLine.getBytes());
+        //responseStream.close();
+        
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+}
+    
 class RandomDataFetchHandler implements HttpHandler
 {
     String[][] database;
@@ -84,6 +116,7 @@ class Main {
     static int DB_SIZE = 100;
 
     static String INDEX_HTML_PATH = "../frontend/index.html";
+    static String COMIC_LIST_PATH = "../Comic_List.txt";
 
     public static void main(String[] args)
     {
@@ -91,13 +124,13 @@ class Main {
 
             // Database where all the links and names are stored
             // Stored as [[link][name], [link2][name2]]
-            
             String[][] database = new String[DB_SIZE][2];
-            String pathname = "../Comic_List.txt";
-            File file = new File(pathname); 
+            HashMap<String, Integer> scoresheet = new HashMap<String, Integer>();
+
+            File file = new File(COMIC_LIST_PATH); 
             Scanner scanner = new Scanner(file);
 
-            System.out.println("Reading database from:" + pathname);
+            System.out.println("Reading database from:" + COMIC_LIST_PATH);
 
             for (int i = 0; scanner.hasNextLine(); i++)
             {
@@ -106,11 +139,11 @@ class Main {
                 database[index][dataType] = scanner.nextLine();
             }
 
+            //====================== Server stuff =================================
             InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
-            //String responseString = dbToStringBuilder(database).toString();
             StaticFileHandler rootHandler = new StaticFileHandler(INDEX_HTML_PATH);
             server.createContext("/", rootHandler);
 
@@ -119,6 +152,9 @@ class Main {
 
             StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
             server.createContext("/index", indexHtml);
+
+            ScoresheetHandler scoresheetHandler = new ScoresheetHandler(scoresheet);
+            server.createContext("/scoresheet", scoresheetHandler);
 
             server.start(); 
             System.out.println("Serving at :" + server.getAddress());
