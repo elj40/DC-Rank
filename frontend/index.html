@@ -17,6 +17,7 @@
             flex-direction: column; /* Stack name above image */
             justify-content: center;
             align-items: center;
+            cursor: pointer; /* Indicate it's clickable */
         }
 
         .character-name {
@@ -32,13 +33,13 @@
     </style>
 </head>
 <body>
-    <div class="image-container">
-        <p class="character-name">Wonder Woman</p>
+    <div class="image-container" onclick="contender1Click()">
+        <p class="character-name" id="name1">Wonder Woman</p>
         <img id="contender1" src="https://comicvine.gamespot.com/a/uploads/scale_small/12/124259/8988502-ezgif-5-6e9998db59.jpg">
     </div>
 
-    <div class="image-container">
-        <p class="character-name">Black Canary</p>
+    <div class="image-container" onclick="contender2Click()">
+        <p class="character-name" id="name2">Black Canary</p>
         <img id="contender2" src="https://comicvine.gamespot.com/a/uploads/scale_small/11112/111123579/8188597-batman_urban_legends_vol_1_6_textless_ejikure_variant.jpg">
     </div>
 

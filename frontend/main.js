@@ -60,3 +60,21 @@ function showImage2(characterName2, imageLink2) {
     container2.innerHTML = ""; 
     container2.appendChild(img);
 }
+
+function contender1Click() {
+    let name1 = document.getElementById("name1");
+    let name2 = document.getElementById("name2");
+
+    name1.textContent = "Wonder Woman WON!!";
+    name2.textContent = ""; // Remove opponent's name
+    document.getElementById("contender2").remove(); // Remove Black Canary's image
+}
+
+function contender2Click() {
+    let name1 = document.getElementById("name1");
+    let name2 = document.getElementById("name2");
+
+    name2.textContent = "Black Canary WON!!";
+    name1.textContent = ""; // Remove opponent's name
+    document.getElementById("contender1").remove(); // Remove Wonder Woman's image
+}
