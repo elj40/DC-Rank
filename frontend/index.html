@@ -1,12 +1,47 @@
-<html>
-    <body>
-        <p id="pg">Hi there</p>
-        <p id="name">Wonder Woman</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column; /* Stack name above image */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .character-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px; /* Space between name and image */
+        }
+
+        img {
+            max-width: 45vw;
+            max-height: 80vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <p class="character-name">Wonder Woman</p>
         <img id="contender1" src="https://comicvine.gamespot.com/a/uploads/scale_small/12/124259/8988502-ezgif-5-6e9998db59.jpg">
-    </body>
-    <!---<script src="main.js"></script>-->
-    <script> 
-        let imageElement = document.getElementById("contender1");
-        imageElement.src = "https://comicvine.gamespot.com/a/uploads/scale_small/11116/111164920/9314884-gjw6_mjxiaacmgf.jpeg"
-    </script>
+    </div>
+
+    <div class="image-container">
+        <p class="character-name">Black Canary</p>
+        <img id="contender2" src="https://comicvine.gamespot.com/a/uploads/scale_small/11112/111123579/8188597-batman_urban_legends_vol_1_6_textless_ejikure_variant.jpg">
+    </div>
+
+    <script src="main.js"></script>
+</body>
 </html>

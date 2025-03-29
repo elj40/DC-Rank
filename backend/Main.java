@@ -1,15 +1,13 @@
-import com.sun.net.httpserver.HttpServer; 
-import com.sun.net.httpserver.HttpHandler; 
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
-import java.net.InetSocketAddress;
-
-import java.util.Scanner;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.File;
-import java.io.OutputStream;
 import java.io.IOException;
-
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.Scanner;
 
 class RootHandler implements HttpHandler {
     String responseData;
