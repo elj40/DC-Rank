@@ -267,8 +267,21 @@ img {
             }
         }
 
+        function setupWinScreen(c1_or_c2) {
+                    c = document.getElementById(c1_or_c2 + "-container");
+                    vs = document.getElementsByClassName("VSText")[0];
+                    instr = document.getElementsByClassName("Instructions")[0];
+                    document.body.style.backgroundImage = "url(https://previews.123rf.com/images/kjpargeter/kjpargeter0809/kjpargeter080900061/3558497-falling-confetti-background.jpg)";
+                    c.style.display = "none";
+                    vs.style.display = "none";
+                    instr.style.visibility = "hidden";
+                };
+
         async function contender1Click() {
-            if (seenCharacters.size >= 100) return;
+                    if (seenCharacters.size >= 100) {
+                                setupWinScreen("c2");
+                                return;
+                        }
             let name1 = document.getElementById("name1");
             let name2 = document.getElementById("name2");
 
@@ -283,7 +296,10 @@ img {
         }
 
         async function contender2Click() {
-            if (seenCharacters.size >= 100) return;
+                    if (seenCharacters.size >= 100) {
+                                setupWinScreen("c1");
+                                return;
+                            }
             let name1 = document.getElementById("name1");
             let name2 = document.getElementById("name2");
 
@@ -297,7 +313,7 @@ img {
             });
         }
 
-        document.onkeyup = async function(eventKeyPress) {
+        document.onkeydown = async function(eventKeyPress) {
             if (eventKeyPress.key === "ArrowLeft") {
                 await contender1Click();
             }
@@ -319,13 +335,13 @@ img {
         Select whoever you think is hotter (or use arrow keys)
     </div>
 
-    <div class="image-container" onclick="contender1Click()">
+    <div class="image-container" id="c1-container" onclick="contender1Click()">
         <p id="name1">Loading...</p>
         <img id="contender1" src=""  height="700">
     </div>
     <div class="VSText">VS</div>
 
-    <div class="image-container" onclick="contender2Click()">
+    <div class="image-container" id="c2-container" onclick="contender2Click()">
         <p id="name2">Loading...</p>
         <img id="contender2" src="" height="700">
     </div>
