@@ -184,7 +184,6 @@ class LeaderboardHandler implements HttpHandler
 
         for (String key : Main.scoresheet.keySet())
         {
-            System.out.println("[" + key + "]");
             if (i++ != 0) sb.append(";");
             sb.append(key);
             sb.append("|");
@@ -247,9 +246,12 @@ class Main {
             server.createContext("/random", rdfHandler);
 
             LeaderboardHandler leaderboardHandler = new LeaderboardHandler();
-            server.createContext("/leaderboard", leaderboardHandler);
+            server.createContext("/leaderboardData", leaderboardHandler);
 
-            StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
+            StaticFileHandler leaderboardHtml = new StaticFileHandler(LEADERBOARD_PATH);
+            server.createContext("/leaderboard", leaderboardHtml);
+
+            StaticFileHandler indexHtml = new StaticFileHandler(INDEX_HTML_PATH);
             server.createContext("/", indexHtml);
             server.createContext("/index.html", indexHtml);
 
