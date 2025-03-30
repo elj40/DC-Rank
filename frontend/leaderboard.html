@@ -118,7 +118,7 @@
     <div class="leaderboard-container">
         <div class="leaderboard-header-container">
             <div class="leaderboard-header">Leaderboard</div>
-            <div class="backLink"><a href="http://127.0.0.1:8080">Home</a></div>
+            <div class="backLink"><a href="/">Home</a></div>
         </div>
         <div class="message" id="message">Not enough data to display leaderboard yet</div>
         <table class="leaderboard" id="leaderboard">
@@ -139,7 +139,7 @@
         const message = document.getElementById("message");
 
         async function getLeaderboardData() {
-            let response = await fetch("http://127.0.0.1:8080/leaderboardData");
+            let response = await fetch("/leaderboardData");
             let data = await response.text();
             return data;
         }
