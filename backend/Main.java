@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 
 class GenericHandler implements HttpHandler {
@@ -95,25 +96,78 @@ class ScoresheetHandler implements HttpHandler
     
 class RandomDataFetchHandler implements HttpHandler
 {
+    HashSet<String> databaseSet;
+    HashSet<String> seenSet;
+    HashSet<String> unseenSet;
+
+    Random random;
+
+    RandomDataFetchHandler()
+    {
+        random = new Random();
+
+        databaseSet = new HashSet<String>();
+        seenSet = new HashSet<String>();
+        unseenSet = new HashSet<String>();
+
+        for (String name : Main.databaseNames) databaseSet.add(name);
+    }
+
     public void handle(HttpExchange exchange)
     {
-        Random random = new Random();
-        int index = random.nextInt(Main.DB_SIZE);
-
         try {
 
-        String randomLine = Main.dbNameToStringBuilder(Main.database, Main.databaseNames[index]).toString();
+        seenSet.clear();
+
+        // Interpret the array sent by JS
+        InputStream requestBodyStream = exchange.getRequestBody();
+        StringBuilder sb = new StringBuilder();
+        int c = requestBodyStream.read();
+
+        while (c != -1)
+        {
+            if ((char) c == ',') 
+            {
+                seenSet.add(sb.toString());
+                sb.setLength(0);
+            } else sb.append((char) c);
+            c = requestBodyStream.read();
+        };
+        if (sb.length() > 0) seenSet.add(sb.toString());
+        String randomName = getUnseenRandomName();
+        
+        if (randomName.equals("Finished")) randomName = "Wonder Woman";
+        if (randomName.equals("NotFound")) randomName = "Black Canary";
+
+        String randomLine = Main.dbNameToStringBuilder(Main.database, randomName).toString();
         exchange.sendResponseHeaders(200, 0);
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.write(randomLine.getBytes());
         responseStream.close();
         
         } catch (IOException e) { e.printStackTrace(); }
+        catch (Exception e) { e.printStackTrace(); }
     };
 
-    int getUnseenRandomIndex(HashSet<String> seen)
+    String getUnseenRandomName()
     {
-        return 0;
+        if (seenSet.size() == databaseSet.size()) return "Finished";
+
+        unseenSet.clear();
+        unseenSet.addAll(databaseSet);
+        unseenSet.removeAll(seenSet);
+
+        int max = unseenSet.size();
+        if (max == 0) return "Finished";
+        int index = random.nextInt(max);
+        int i = 0;
+        for (String name : unseenSet)
+        {
+            if (i == index) return name;
+            i++;
+        }
+        
+        return "NotFound";
     };
 }
 class Main {
@@ -195,7 +249,6 @@ class Main {
 
     static StringBuilder dbNameToStringBuilder(HashMap<String, String> database, String name)
     {
-        System.out.println("dbNameToStringBuilder: " + name);
         assert(database.containsKey(name) && name != null);
         StringBuilder sb = new StringBuilder();
         sb.append(name);

@@ -230,16 +230,15 @@ img {
     </style>
     <script>
         const baseURL = "http://127.0.0.1:8080";
-        let seenCharacters = [];
+        let seenCharacters = new Set();
 
-        async function getRandomData() {
-            let response = await fetch(baseURL + "/random");
+        async function getRandomData(seen) 
+        {
+            let response = await fetch(baseURL + "/random", {
+                        method: "POST",
+                        body: Array.from(seenCharacters).toString(),
+                    });
             let data = await response.text();
-            fetch(baseURL + "/random", {
-                method: "POST",
-                body: seenCharacters
-            });
-
             return data;
         }
 
@@ -250,9 +249,6 @@ img {
             while (char1 === char2) {  // Ensure they are not the same
                 char2 = await getRandomData();
             }
-            seenCharacters.push(char1);
-            seenCharacters.push(char2);
-            
 
             updateCharacter("contender1", "name1", char1);
             updateCharacter("contender2", "name2", char2);
@@ -264,20 +260,21 @@ img {
                 let characterName = data.substring(0, colonIndex).trim();
                 let imageLink = data.substring(colonIndex + 1).trim();
 
+                seenCharacters.add(characterName);
+
                 document.getElementById(nameId).textContent = characterName;
                 document.getElementById(imgId).src = imageLink;
             }
         }
 
         async function contender1Click() {
+            if (seenCharacters.size >= 100) return;
             let name1 = document.getElementById("name1");
             let name2 = document.getElementById("name2");
 
             name2.textContent = "";
             let newCharacter = await getRandomData();
             updateCharacter("contender2", "name2", newCharacter);
-            seenCharacters.push(newCharacter);
-
 
             fetch(baseURL + "/scoresheet", {
                 method: "POST",
@@ -286,13 +283,13 @@ img {
         }
 
         async function contender2Click() {
+            if (seenCharacters.size >= 100) return;
             let name1 = document.getElementById("name1");
             let name2 = document.getElementById("name2");
 
             name1.textContent = "";
             let newCharacter = await getRandomData();
             updateCharacter("contender1", "name1", newCharacter);
-            seenCharacters.push(newCharacter);
 
             fetch(baseURL + "/scoresheet", {
                 method: "POST",
