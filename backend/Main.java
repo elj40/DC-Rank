@@ -247,7 +247,7 @@ class Main {
             }
 
             //====================== Server stuff =================================
-            InetSocketAddress address = new InetSocketAddress(8080);
+            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
