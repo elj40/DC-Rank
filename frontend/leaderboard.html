@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a); 
+        }
+
+        .leaderboard-container {
+            width: 100vw;  /* Take up full width of viewport */
+            height: 100vh;  /* Take up 90% of the viewport height */
+            background: rgb(255, 255, 255);
+            box-shadow: 2vh 2vh 4vh rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a); 
+            color: white;
+            text-align: center;
+            font-size: 2rem;
+            padding: 2vh;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);  /* Box shadow outside the header */
+        }
+
+        .leaderboard {
+            width: 100%;  /* Ensure the table takes up the full width of the container */
+            flex-grow: 1;
+            overflow-y: auto;
+            border-collapse: collapse;
+            display: block;
+            max-height: 100%;
+            table-layout: fixed;  /* Ensure cells take up full width of the table */
+        }
+        
+
+        .leaderboard th, .leaderboard td {
+            border-bottom: 0.5vh solid rgb(153, 153, 153);
+            padding: 1.5vh;
+            text-align: left;
+            font-size: 1.2rem;
+            box-sizing: border-box; /* Ensure borders don't push content outside */
+        }
+
+        .leaderboard th {
+            background-color: #4CAF50;
+            color: white;
+            position: sticky;
+            top: 0;
+            
+        }
+
+        .leaderboard td:first-child {
+            width: 10vw; /* Adjust to a relative width */
+            text-align: center;
+        }
+
+        .leaderboard td:nth-child(2) {
+            width: 50vw; /* Adjust player name column to take up most of the space */
+            text-align: left;
+        }
+
+        .leaderboard td:last-child {
+            width: 40vw; /* Adjust the score column to take the remaining space */
+            text-align: center;
+        }
+
+        .leaderboard img {
+            width: 6vh;
+            height: 6vh;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 1vw;
+        }
+
+        .leaderboard-container::-webkit-scrollbar {
+            width: 1vw;
+        }
+
+        .leaderboard-container::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 1vw;
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <div class="leaderboard-header">Leaderboard</div>
+        <table class="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const leaderboardBody = document.getElementById("leaderboard-body");
+
+        for (let i = 1; i <= 100; i++) {
+            const score = Math.floor(Math.random() * 1000);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>#${i}</td>
+                <td><img src="https://comicvine.gamespot.com/a/uploads/scale_small/12/124259/8988502-ezgif-5-6e9998db59.jpg" alt="Player ${i}"> Player ${i}</td>
+                <td>${score}</td>
+            `;
+            leaderboardBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>
