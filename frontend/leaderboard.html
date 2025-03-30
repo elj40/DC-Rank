@@ -5,31 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
     <style>
-        /* ... (keep all existing styles the same until modified below) ... */
-
-        .leaderboard-header-container {
-            position: relative; /* Add this for backLink positioning */
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a); 
+        }
+
+        .leaderboard-container {
+            width: 100vw;  /* Take up full width of viewport */
+            height: 100vh;  /* Take up 90% of the viewport height */
+            background: rgb(255, 255, 255);
+            box-shadow: 2vh 2vh 4vh rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .leaderboard-header-container {
+            display: flex;  /* Use flexbox for alignment */
+            justify-content: center;  /* Center the leaderboard */
+            align-items: center;  /* Vertically center the content */
             padding: 2vh;
-            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a);
+            background: linear-gradient(to right, #0a5a0a, #4CAF50, #0a5a0a); 
             color: white;
         }
 
-        /* Add new message style */
-        .empty-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .leaderboard-header {
             font-size: 2rem;
-            color: #0a5a0a;
+            text-align: center; /* Center text horizontally */
+            flex-grow: 1; /* Allow it to grow and take up available space */
+        }
+
+        .backLink {
+            font-size: 1rem;
+            position: absolute; /* Take it out of normal flow */
+            right: 2vw; /* Position it to the right */
+        }
+
+        .backLink a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .backLink a:hover {
+            color: #d1e7d1; /* Light color when hovering */
+        }
+
+        .leaderboard {
+            width: 100%;  /* Ensure the table takes up the full width of the container */
+            flex-grow: 1;
+            overflow-y: auto;
+            border-collapse: collapse;
+            display: block;
+            max-height: 100%;
+            table-layout: fixed;  /* Ensure cells take up full width of the table */
+        }
+
+        .leaderboard th, .leaderboard td {
+            border-bottom: 0.5vh solid rgb(153, 153, 153);
+            padding: 1.5vh;
+            text-align: left;
+            font-size: 1.2rem;
+            box-sizing: border-box; /* Ensure borders don't push content outside */
+        }
+
+        .leaderboard th {
+            background-color: #4CAF50;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .leaderboard td:first-child {
+            width: 10vw; /* Adjust to a relative width */
             text-align: center;
-            padding: 2rem;
-            border: 2px solid #0a5a0a;
-            border-radius: 1rem;
-            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .leaderboard td:nth-child(2) {
+            width: 50vw; /* Adjust player name column to take up most of the space */
+            text-align: left;
+        }
+
+        .leaderboard td:last-child {
+            width: 40vw; /* Adjust the score column to take the remaining space */
+            text-align: center;
+        }
+
+        .leaderboard img {
+            width: 6vh;
+            height: 6vh;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 1vw;
+        }
+
+        .leaderboard-container::-webkit-scrollbar {
+            width: 1vw;
+        }
+
+        .leaderboard-container::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 1vw;
         }
     </style>
 </head>
@@ -61,13 +143,14 @@
             let data = await response.text();
             return data;
         }
-
+    
+        // Function to process the leaderboard data
         async function processLeaderboardData() {
             let data = await getLeaderboardData();
             let leaderboardlist = [];
             let innerList = [];
-            let startIndex = 0;
-
+            let startIndex = 0; 
+    
             for (let i = 0; i < data.length; i++) {
                 if (data[i] === ";") {
                     innerList.push(data.substring(startIndex, i));
@@ -79,33 +162,48 @@
                     startIndex = i + 1;
                 }
             }
+            if (leaderboardlist.length < 2) {
+                let lb = document.querySelector(".leaderboard-container");
+                let leaderboardBody = document.getElementById("leaderboard-body");
+                
+                // Hide the leaderboard content (table rows)
+                leaderboardBody.style.display = "none";
 
-            // Clear existing content
-            leaderboardBody.innerHTML = '';
+                let message = document.createElement("div");
+                message.innerText = "Not enough data to display leaderboard";
 
-            // Check if leaderboard is empty
-            if (leaderboardlist.length === 0) {
-                const container = document.querySelector(".leaderboard-container");
-                const message = document.createElement("div");
-                message.className = "empty-message";
-                message.textContent = "Not enough data to display leaderboard";
-                container.appendChild(message);
-                return;
+                message.style.position = "fixed";
+                message.style.top = "5vh"; // Position from the top, relative to viewport height
+                message.style.left = "50%";
+                message.style.transform = "translateX(-50%)"; // Center it horizontally
+                message.style.fontSize = "3vw"; // Font size relative to viewport width
+                message.style.fontWeight = "bold";
+                message.style.color = "#fff";
+                
+                message.style.padding = "2vh 4vw"; // Padding relative to viewport height and width
+                message.style.borderRadius = "1vh"; // Border radius relative to viewport height
+                message.style.boxShadow = "0 0.5vh 1vh rgba(0, 0, 0, 0.2)"; // Shadow with relative values
+                document.body.style.backgroundColor = "rgb(153, 153, 153)"; // Background color for the body (works)
+
+                // Add the message to the body
+                document.body.appendChild(message);
             }
 
-            leaderboardlist.sort((a, b) => b[1] - a[1]);
-
+            leaderboardlist.sort((a, b) => {
+                return b[1] - a[1]; 
+            });
+    
             leaderboardlist.forEach((item, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>#${index + 1}</td>
-                    <td><img src="${item[2]}" alt="Player ${index + 1}" style="width: 6vh; height: 6vh; border-radius: 50%; margin-right: 1vw;"> ${item[0]}</td>
-                    <td>${item[1]}</td>
+                    <td><img src="${item[2]}" alt="Player ${index + 1}" style="width: 6vh; height: 6vh; border-radius: 50%; margin-right: 1vw;"> ${item[0]}</td> <!-- Display name -->
+                    <td>${item[1]}</td> <!-- Display score -->
                 `;
                 leaderboardBody.appendChild(row);
             });
-        }
 
+        }
         processLeaderboardData();
     </script>
 </body>
