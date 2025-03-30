@@ -170,6 +170,34 @@ class RandomDataFetchHandler implements HttpHandler
         return "NotFound";
     };
 }
+class LeaderboardHandler implements HttpHandler
+{
+    public void handle(HttpExchange exchange)
+    {
+        try {
+
+
+        exchange.sendResponseHeaders(200, 0);
+        OutputStream responseStream = exchange.getResponseBody();
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+
+        for (String key : Main.scoresheet.keySet())
+        {
+            System.out.println("[" + key + "]");
+            if (i++ != 0) sb.append(";");
+            sb.append(key);
+            sb.append("|");
+            sb.append(Main.scoresheet.get(key));
+            sb.append("|");
+            sb.append(Main.database.get(key));
+        }
+        responseStream.write(sb.toString().getBytes());
+        responseStream.close();
+        } catch (IOException e) { e.printStackTrace(); }  
+        catch (Exception e) { e.printStackTrace(); } 
+    }
+}
 class Main {
     static int LINK_INDEX = 0;
     static int NAME_INDEX = 1;
@@ -177,6 +205,7 @@ class Main {
 
     static String INDEX_HTML_PATH = "../frontend/index.html";
     static String COMIC_LIST_PATH = "../Comic_List.txt";
+    static String LEADERBOARD_PATH = "../frontend/leaderboard.html";
 
     static HashMap<String, Integer> scoresheet;
     static HashMap<String, String> database;
@@ -215,7 +244,10 @@ class Main {
             server.bind(address, 0);
 
             RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler();
-            HttpContext rdfContext = server.createContext("/random", rdfHandler);
+            server.createContext("/random", rdfHandler);
+
+            LeaderboardHandler leaderboardHandler = new LeaderboardHandler();
+            server.createContext("/leaderboard", leaderboardHandler);
 
             StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
             server.createContext("/", indexHtml);
