@@ -209,21 +209,17 @@ class Main {
                 database.put(name, link);
             }
 
-
-
             //====================== Server stuff =================================
             InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
-            StaticFileHandler rootHandler = new StaticFileHandler(INDEX_HTML_PATH);
-            server.createContext("/", rootHandler);
-
             RandomDataFetchHandler rdfHandler = new RandomDataFetchHandler();
             HttpContext rdfContext = server.createContext("/random", rdfHandler);
 
             StaticFileHandler indexHtml = new StaticFileHandler("../frontend/index.html");
-            server.createContext("/index", indexHtml);
+            server.createContext("/", indexHtml);
+            server.createContext("/index.html", indexHtml);
 
             ScoresheetHandler scoresheetHandler = new ScoresheetHandler(scoresheet);
             server.createContext("/scoresheet", scoresheetHandler);
