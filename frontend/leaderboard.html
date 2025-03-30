@@ -112,19 +112,51 @@
 
     <script>
         const leaderboardBody = document.getElementById("leaderboard-body");
-        
-
-
-        for (let i = 1; i <= 100; i++) {
-            const score = Math.floor(Math.random() * 1000);
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>#${i}</td>
-                <td><img src="https://comicvine.gamespot.com/a/uploads/scale_small/12/124259/8988502-ezgif-5-6e9998db59.jpg" alt="Player ${i}"> Player ${i}</td>
-                <td>${score}</td>
-            `;
-            leaderboardBody.appendChild(row);
+    
+        async function getLeaderboardData() {
+            let response = await fetch('your-leaderboard-data-source');  // Provide your data source URL
+            let data = await response.text();
+            return data;
         }
+    
+        // Function to process the leaderboard data
+        async function processLeaderboardData() {
+            let data = await getLeaderboardData();
+            let leaderboardlist = [];
+            let innerList = [];
+            let startIndex = 0; 
+    
+            for (let i = 0; i < data.length; i++) {
+                if (data[i] === ";") {
+                    innerList.push(data.substring(startIndex, i));
+                    leaderboardlist.push(innerList);
+                    innerList = [];
+                    startIndex = i + 1;
+                } else if (data[i] === "|") {
+                    innerList.push(data.substring(startIndex, i));
+                    startIndex = i + 1;
+                }
+            }
+    
+            leaderboardlist.sort((a, b) => {
+                return b[1] - a[1]; 
+            });
+    
+            console.log(leaderboardlist);
+    
+            leaderboardlist.forEach((item, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>#${index + 1}</td>
+                    <td><img src="https://comicvine.gamespot.com/a/uploads/scale_small/12/124259/8988502-ezgif-5-6e9998db59.jpg" alt="Player ${index + 1}"> Player ${index + 1}</td>
+                    <td>${item[1]}</td> <!-- Assuming item[1] is the score -->
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+    
+        processLeaderboardData();
     </script>
+    
 </body>
 </html>
