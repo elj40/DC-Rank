@@ -112,9 +112,10 @@
 
     <script>
         const leaderboardBody = document.getElementById("leaderboard-body");
-    
+        const baseURL = "http://127.0.0.1:8080";
+
         async function getLeaderboardData() {
-            let response = await fetch('your-leaderboard-data-source');  // Provide your data source URL
+            let response = await fetch(baseURL + "/leaderboardData");  // Provide your data source URL
             let data = await response.text();
             return data;
         }
