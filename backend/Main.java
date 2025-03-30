@@ -56,6 +56,7 @@ class StaticFileHandler implements HttpHandler
         byte[] fileBytes = fileInputStream.readAllBytes();
 
         Headers responseHeaders = exchange.getResponseHeaders();
+        responseHeaders.add("Access-Control-Allow-Origin", "*");
         responseHeaders.set("Content-Type", "text/html; charset=utf-8");
         exchange.sendResponseHeaders(200, 0);
 
@@ -215,12 +216,15 @@ class Main {
     static String COMIC_LIST_PATH = "../Comic_List.txt";
     static String LEADERBOARD_PATH = "../frontend/leaderboard.html";
 
+    static String serverAddress = "127.0.0.1";
+
     static HashMap<String, Integer> scoresheet;
     static HashMap<String, String> database;
     static String[] databaseNames;
 
     public static void main(String[] args)
     {
+
         try{
 
             // Database where all the links and names are stored
@@ -247,7 +251,12 @@ class Main {
             }
 
             //====================== Server stuff =================================
-            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
+            if (args.length == 1 && args[0].equals("fr")) {
+                // server address in 127.0.0.1 by default
+                serverAddress = "0.0.0.0";
+            }
+
+            InetSocketAddress address = new InetSocketAddress(serverAddress, 8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
