@@ -268,14 +268,17 @@ img {
         }
 
         function setupWinScreen(c1_or_c2) {
-                    c = document.getElementById(c1_or_c2 + "-container");
-                    vs = document.getElementsByClassName("VSText")[0];
-                    instr = document.getElementsByClassName("Instructions")[0];
-                    document.body.style.backgroundImage = "url(https://previews.123rf.com/images/kjpargeter/kjpargeter0809/kjpargeter080900061/3558497-falling-confetti-background.jpg)";
-                    c.style.display = "none";
-                    vs.style.display = "none";
-                    instr.style.visibility = "hidden";
-                };
+            let c = document.getElementById(c1_or_c2 + "-container");
+            let vs = document.getElementsByClassName("VSText")[0];
+            let instr = document.getElementsByClassName("Instructions")[0];
+            let winnerName = document.getElementById(c1_or_c2 === "c1" ? "name2" : "name1");
+            winnerName.style.color = "red";
+            document.body.style.backgroundImage = "url(https://previews.123rf.com/images/kjpargeter/kjpargeter0809/kjpargeter080900061/3558497-falling-confetti-background.jpg)";
+            c.style.display = "none";
+            vs.style.display = "none";
+            instr.style.visibility = "hidden";
+            document.onkeydown = null;
+        };
 
         async function contender1Click() {
                     if (seenCharacters.size >= 100) {
