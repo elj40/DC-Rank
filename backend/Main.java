@@ -85,8 +85,10 @@ class ScoresheetHandler implements HttpHandler
         if (scoresheet.containsKey(requestBody)) newScore = scoresheet.get(requestBody)+1;
         scoresheet.put(requestBody, newScore);
 
-
+        Headers responseHeaders = exchange.getResponseHeaders();
+        responseHeaders.add("Access-Control-Allow-Origin", "*");
         exchange.sendResponseHeaders(200, 0);
+
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.close();
         } catch (IOException e) { e.printStackTrace(); }  
@@ -140,7 +142,11 @@ class RandomDataFetchHandler implements HttpHandler
         if (randomName.equals("NotFound")) randomName = "Black Canary";
 
         String randomLine = Main.dbNameToStringBuilder(Main.database, randomName).toString();
+
+        Headers responseHeaders = exchange.getResponseHeaders();
+        responseHeaders.add("Access-Control-Allow-Origin", "*");
         exchange.sendResponseHeaders(200, 0);
+        
         OutputStream responseStream = exchange.getResponseBody();
         responseStream.write(randomLine.getBytes());
         responseStream.close();
@@ -176,9 +182,6 @@ class LeaderboardHandler implements HttpHandler
     {
         try {
 
-
-        exchange.sendResponseHeaders(200, 0);
-        OutputStream responseStream = exchange.getResponseBody();
         StringBuilder sb = new StringBuilder();
         int i = 0;
 
@@ -191,6 +194,12 @@ class LeaderboardHandler implements HttpHandler
             sb.append("|");
             sb.append(Main.database.get(key));
         }
+
+        Headers responseHeaders = exchange.getResponseHeaders();
+        responseHeaders.add("Access-Control-Allow-Origin", "*");
+        exchange.sendResponseHeaders(200, 0);
+
+        OutputStream responseStream = exchange.getResponseBody();
         responseStream.write(sb.toString().getBytes());
         responseStream.close();
         } catch (IOException e) { e.printStackTrace(); }  
@@ -238,7 +247,7 @@ class Main {
             }
 
             //====================== Server stuff =================================
-            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8080);
+            InetSocketAddress address = new InetSocketAddress(8080);
             HttpServer server = HttpServer.create();
             server.bind(address, 0);
 
