@@ -188,6 +188,7 @@ class LeaderboardHandler implements HttpHandler
 
         for (String key : Main.scoresheet.keySet())
         {
+            if (key.isEmpty()) continue;
             if (i++ != 0) sb.append(";");
             sb.append(key);
             sb.append("|");

@@ -1,0 +1,12 @@
+Instance summary (https://eu-north-1.console.aws.amazon.com/ec2/home?region=eu-north-1#Instances):
+
+Instance ID: i-0ee5a241e96518d27
+Public IPv4 address: 13.60.78.150
+Private IPv4 addresses: 172.31.36.178
+IPv6 address: –
+Public IPv4 DNS: ec2-13-60-78-150.eu-north-1.compute.amazonaws.com
+Hostname type: "IP name: ip-172-31-36-178.eu-north-1.compute.internal"
+Private IP DNS name (IPv4 only): ip-172-31-36-178.eu-north-1.compute.internal
+Answer private resource DNS name: IPv4 (A)
+Instance type: t3.micro
+Elastic IP addresses: –
