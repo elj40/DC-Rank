@@ -170,6 +170,7 @@
 
             leaderboardTable.style.display = "table"; // Show table
             message.style.display = "none"; // Hide message
+            leaderboardBody.innerHTML = "";
 
             leaderboardlist.sort((a, b) => b[1] - a[1]);
 
@@ -185,6 +186,7 @@
         }
         
         processLeaderboardData();
+        setInterval(processLeaderboardData, 500);
     </script>
 </body>
 </html>
